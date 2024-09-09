@@ -1,0 +1,17 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.FoodOrderApps" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/blue</item>
+    </style>
+
+    <style name="Theme.FoodOrderApps" parent="Base.Theme.FoodOrderApps" />
+
+    <style name="Theme.SplashScreen" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your splash screen theme here -->
+       <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="overlay">false</item>
+    </style>
+</resources>
