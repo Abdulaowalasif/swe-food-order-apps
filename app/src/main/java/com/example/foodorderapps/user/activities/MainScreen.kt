@@ -14,16 +14,13 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
-import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.foodorderapps.R
 import com.example.foodorderapps.databinding.ActivityHomeScreenBinding
-import com.example.foodorderapps.user.adapters.SearchAdapter
 import com.example.foodorderapps.user.fragments.HomeScreenFragment
 import com.example.foodorderapps.user.fragments.ProfileFragment
-import com.example.foodorderapps.user.models.Search
-import com.example.foodorderapps.utils.Utils.Companion.HOME_FRAGMENT
-import com.example.foodorderapps.utils.Utils.Companion.PROFILE_FRAGMENT
+import com.example.foodorderapps.common.utils.Utils.Companion.HOME_FRAGMENT
+import com.example.foodorderapps.common.utils.Utils.Companion.PROFILE_FRAGMENT
 import com.example.foodorderapps.user.viewModels.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 

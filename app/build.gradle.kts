@@ -65,7 +65,9 @@ dependencies {
     implementation (libs.glide)
     implementation (libs.androidx.appcompat)
     implementation (libs.imageslideshow)
-
+    implementation (libs.retrofit)
+    implementation (libs.gson)
+    implementation (libs.converter.gson)
 }
 kapt {
     correctErrorTypes = true

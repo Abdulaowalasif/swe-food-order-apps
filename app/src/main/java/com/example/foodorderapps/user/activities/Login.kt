@@ -4,8 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.example.foodorderapps.admin.activities.AdminLogin
 import com.example.foodorderapps.databinding.ActivityLoginBinding
 import com.example.foodorderapps.user.viewModels.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -56,5 +58,18 @@ class Login : AppCompatActivity() {
             startActivity(intent)
         }
 
+        binding.adminLogin.setOnClickListener {
+            val intent=Intent(this,AdminLogin::class.java)
+            startActivity(intent)
+        }
+
+
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                finishAffinity()
+            }
+        }
+        onBackPressedDispatcher.addCallback(this, callback)
     }
+
 }

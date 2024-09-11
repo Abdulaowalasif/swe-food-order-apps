@@ -4,53 +4,61 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.foodorderapps.admin.viewmodels.AdminAuthViewModel
+import com.example.foodorderapps.common.models.Restaurants
 import com.example.foodorderapps.databinding.ActivityAdminLoginBinding
-import com.example.foodorderapps.user.activities.MainScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class AdminLogin : AppCompatActivity() {
-    private val binding:ActivityAdminLoginBinding by lazy {
+    private val binding: ActivityAdminLoginBinding by lazy {
         ActivityAdminLoginBinding.inflate(layoutInflater)
     }
 
-    private val auth: AdminAuthViewModel by viewModels()
+    private val authViewModel: AdminAuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-
         binding.login.setOnClickListener {
             val email = binding.email.text.toString()
             val pass = binding.password.text.toString()
-            binding.progressBar2.visibility = View.VISIBLE
-            if (email.isNotBlank() && pass.isNotBlank()) {
-                auth.signInAdmin(email, pass)
-            } else {
-                binding.progressBar2.visibility = View.GONE
-                Toast.makeText(this, "enter all the details", Toast.LENGTH_SHORT).show()
-            }
 
+            if (email.isNotBlank() && pass.isNotBlank()) {
+                binding.progressBar2.visibility = View.VISIBLE
+                authViewModel.signInAdmin(email, pass)
+            } else {
+                Toast.makeText(this, "Please enter all the details", Toast.LENGTH_SHORT).show()
+            }
         }
-        auth.signInAdminState.observe(this) {
-            if (it.isSuccess) {
-                binding.progressBar2.visibility = View.GONE
-                val intent = Intent(this, MainScreen::class.java)
+
+        authViewModel.signInAdminState.observe(this) { result ->
+            binding.progressBar2.visibility = View.GONE
+            if (result.isSuccess) {
+                val intent = Intent(this, AdminHome::class.java)
                 startActivity(intent)
                 finish()
             } else {
-                binding.progressBar2.visibility = View.GONE
-                Toast.makeText(
-                    this,
-                    auth.signInAdminState.value.toString(),
-                    Toast.LENGTH_SHORT
-                ).show()
-
+                val errorMessage = result.exceptionOrNull()?.message ?: "Unknown error"
+                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
             }
         }
+
+        binding.signUpText.setOnClickListener {
+            val intent = Intent(this, AdminSignUp::class.java)
+            startActivity(intent)
+        }
+
+        // Handle back press to exit the app
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                finishAffinity()
+            }
+        }
+        onBackPressedDispatcher.addCallback(this, callback)
     }
 }

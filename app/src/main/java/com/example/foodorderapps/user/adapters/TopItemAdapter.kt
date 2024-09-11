@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.foodorderapps.databinding.TopItemListBinding
-import com.example.foodorderapps.user.models.TopItems
+import com.example.foodorderapps.common.models.TopItems
 
 class TopItemAdapter(private val items: List<TopItems>) :
     RecyclerView.Adapter<TopItemAdapter.ViewHolder>() {

@@ -1,9 +1,13 @@
 package com.example.foodorderapps.user.repositories
 
 import android.net.Uri
-import com.example.foodorderapps.user.models.Users
-import com.example.foodorderapps.utils.Utils.Companion.PROFILE
-import com.example.foodorderapps.utils.Utils.Companion.USERS
+import com.example.foodorderapps.common.api.ApiInterface
+import com.example.foodorderapps.common.models.MenuList
+import com.example.foodorderapps.common.models.OrderList
+import com.example.foodorderapps.common.models.Restaurants
+import com.example.foodorderapps.common.models.Admin
+import com.example.foodorderapps.common.utils.Utils.Companion.PROFILE
+import com.example.foodorderapps.common.utils.Utils.Companion.USERS
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -21,7 +25,8 @@ import kotlin.coroutines.resumeWithException
 class UserRepo @Inject constructor(
     private val auth: FirebaseAuth,
     private val storage: FirebaseStorage,
-    private val database: FirebaseDatabase
+    private val database: FirebaseDatabase,
+    private val apiInterface: ApiInterface
 ) {
     suspend fun signInUser(email: String, password: String): Result<Unit> {
         return try {
@@ -42,7 +47,7 @@ class UserRepo @Inject constructor(
             val listener = object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val userExists = snapshot.children.any {
-                        val userData = it.getValue(Users::class.java)
+                        val userData = it.getValue(Admin::class.java)
                         userData?.email == email
                     }
                     continuation.resume(userExists)
@@ -94,7 +99,7 @@ class UserRepo @Inject constructor(
                 usrRef.putFile(imageUri)
                     .addOnSuccessListener {
                         usrRef.downloadUrl.addOnSuccessListener { downloadUrl ->
-                            val user = Users(email, username, downloadUrl.toString())
+                            val user = Admin(email, username, downloadUrl.toString())
                             database.getReference(USERS).child(uid)
                                 .setValue(user)
                         }
@@ -107,16 +112,16 @@ class UserRepo @Inject constructor(
     }
 
     fun getCurrentUser() = auth.currentUser
-    suspend fun getCurrentUserData(): Users = suspendCancellableCoroutine { continuation ->
+    suspend fun getCurrentUserData(): Admin = suspendCancellableCoroutine { continuation ->
         auth.uid?.let { uid ->
             val userRef: DatabaseReference = database.getReference(USERS).child(uid)
             userRef.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val usr = snapshot.getValue(Users::class.java)
+                    val usr = snapshot.getValue(Admin::class.java)
                     if (usr != null) {
                         continuation.resume(usr)
                     } else {
-                        continuation.resume(Users()) // Return a default or empty Users object if data is null
+                        continuation.resume(Admin()) // Return a default or empty Users object if data is null
                     }
                 }
 
@@ -131,5 +136,57 @@ class UserRepo @Inject constructor(
     }
 
     fun logOut() = auth.signOut()
+
+    suspend fun getAllRestaurants(): List<Restaurants>? {
+        return try {
+            val response = apiInterface.getAllRestaurants()
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            // Optionally log the exception here
+            null
+        }
+    }
+
+    suspend fun getAllMenu(id: String): List<MenuList>? {
+        return try {
+            val response = apiInterface.getMenuByRestaurantId(id)
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            // Optionally log the exception here
+            null
+        }
+    }
+
+    suspend fun createOrder(orderList: OrderList): OrderList? {
+        return try {
+            val response = apiInterface.createOrder(orderList)
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            // Optionally log the exception here
+            null
+        }
+    }
+
+    suspend fun deleteOrder(id: Long): Boolean {
+        return try {
+            val response = apiInterface.deleteOrder(id)
+            response.isSuccessful
+        } catch (e: Exception) {
+            // Optionally log the exception here
+            false
+        }
+    }
 
 }

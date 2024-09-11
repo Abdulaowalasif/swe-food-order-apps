@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.foodorderapps.databinding.SearchLayoutBinding
-import com.example.foodorderapps.user.models.Search
+import com.example.foodorderapps.common.models.Search
 
 class SearchAdapter (private val items: List<Search>) :
     RecyclerView.Adapter<SearchAdapter.ViewHolder>() {

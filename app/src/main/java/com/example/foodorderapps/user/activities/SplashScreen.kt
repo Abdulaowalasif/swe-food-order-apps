@@ -12,6 +12,8 @@ import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.example.foodorderapps.R
+import com.example.foodorderapps.admin.activities.AdminHome
+import com.example.foodorderapps.admin.viewmodels.AdminAuthViewModel
 import com.example.foodorderapps.user.viewModels.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -20,6 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class SplashScreen : AppCompatActivity() {
 
     private val viewModel: AuthViewModel by viewModels()
+    private val auth: AdminAuthViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,15 +34,22 @@ class SplashScreen : AppCompatActivity() {
                 WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
         Handler(Looper.getMainLooper()).postDelayed({
+            // Check if the user is logged in as an admin
+
+            // Check if the user is logged in as a regular user
             if (viewModel.getCurrentUser() != null) {
                 val intent = Intent(this, MainScreen::class.java)
                 startActivity(intent)
-            } else {
+            }
+            // If neither admin nor user is logged in, navigate to login screen
+            else {
                 val intent = Intent(this, Login::class.java)
                 startActivity(intent)
             }
+            // Close the current activity
             finish()
         }, 3000)
+
 
 
     }

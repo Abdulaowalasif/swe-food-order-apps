@@ -1,6 +1,6 @@
-package com.example.foodorderapps.user.models
+package com.example.foodorderapps.common.models
 
-data class Users(
+data class Admin(
     var email:String="",
     var username:String="",
     var image:String=""

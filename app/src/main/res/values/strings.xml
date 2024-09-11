@@ -2,4 +2,13 @@
     <string name="app_name">Food Order Apps</string>
     <string name="open">open</string>
     <string name="close">close</string>
+
+    <string name="login">
+        <font color="#03A9F4">Already have an account?</font> <font color="#FF0000">Login</font>
+    </string>
+
+    <string name="signup">
+        <font color="#03A9F4">Don\'t have an account?</font> <font color="#FF0000">SignUp</font>
+    </string>
+
 </resources>

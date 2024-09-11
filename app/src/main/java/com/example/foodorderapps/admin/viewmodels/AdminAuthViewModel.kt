@@ -1,10 +1,13 @@
 package com.example.foodorderapps.admin.viewmodels
 
+
+import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.foodorderapps.admin.repositories.AdminRepositories
-import com.example.foodorderapps.admin.models.Admins
+import com.example.foodorderapps.common.models.Admin
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -13,33 +16,57 @@ import javax.inject.Inject
 class AdminAuthViewModel @Inject constructor(private val repo: AdminRepositories) : ViewModel() {
 
     private val _signUpAdminState = MutableLiveData<Result<Unit>>()
-    val signUpAdminState = _signUpAdminState
+    val signUpAdminState: LiveData<Result<Unit>> get() = _signUpAdminState
+
     private val _signInAdminState = MutableLiveData<Result<Unit>>()
-    val signInAdminState = _signInAdminState
-    private val _adminInfo = MutableLiveData<Admins>()
-    val adminInfo = _adminInfo
+    val signInAdminState: LiveData<Result<Unit>> get() = _signInAdminState
+
+    private val _adminInfo = MutableLiveData<Admin>()
+    val adminInfo: LiveData<Admin> get() = _adminInfo
 
 
     fun signInAdmin(email: String, password: String) {
         viewModelScope.launch {
-            _signInAdminState.value = repo.signInAdmin(email, password)
+            try {
+                _signInAdminState.value = repo.signInAdmin(email, password)
+            } catch (e: Exception) {
+                _signInAdminState.value = Result.failure(e)
+                Log.e("SignIn Error", "Error during sign-in: ${e.message}", e)
+            }
         }
     }
 
     fun signUpAdmin(email: String, password: String, restaurantName: String, image: String) {
         viewModelScope.launch {
-            _signUpAdminState.value = repo.signUpAdmin(email, password, restaurantName, image)
+            try {
+                _signUpAdminState.value = repo.signUpAdmin(email, password, restaurantName, image)
+
+            } catch (e: Exception) {
+                _signUpAdminState.value = Result.failure(e)
+                Log.e("SignUp Error", "Error during sign-up: ${e.message}", e)
+            }
         }
     }
 
-    fun getCurrentAdmin() = repo.getCurrentAdmin()
-
-    fun getCurrentAdminInfo() =
+    fun getCurrentAdmin() {
         viewModelScope.launch {
-            _adminInfo.postValue(repo.getCurrentAdminData())
+            try {
+                _adminInfo.value = repo.getCurrentAdminData()
+            } catch (e: Exception) {
+                Log.e("AdminInfo Error", "Error fetching admin info: ${e.message}", e)
+            }
         }
+    }
 
-    fun logout() = repo.logOut()
+    fun logout() {
+        viewModelScope.launch {
+            try {
+                repo.logOut()
+            } catch (e: Exception) {
+                Log.e("Logout Error", "Error during logout: ${e.message}", e)
+            }
+        }
+    }
+
+
 }
-
-

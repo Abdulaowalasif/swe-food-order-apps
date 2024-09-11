@@ -1,4 +1,4 @@
-package com.example.foodorderapps.di
+package com.example.foodorderapps.common.di
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase

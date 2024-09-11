@@ -3,7 +3,7 @@ package com.example.foodorderapps.user.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.foodorderapps.user.models.Users
+import com.example.foodorderapps.common.models.Admin
 import com.example.foodorderapps.user.repositories.UserRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -16,7 +16,7 @@ class AuthViewModel @Inject constructor(private val repo: UserRepo) : ViewModel(
     val signUpUserState = _signUpUserState
     private val _signInUserState = MutableLiveData<Result<Unit>>()
     val signInUserState = _signInUserState
-    private val _userInfo = MutableLiveData<Users>()
+    private val _userInfo = MutableLiveData<Admin>()
     val userInfo = _userInfo
 
     fun signInUser(email: String, password: String) {

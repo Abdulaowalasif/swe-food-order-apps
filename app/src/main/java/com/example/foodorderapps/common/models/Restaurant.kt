@@ -1,3 +1,3 @@
-package com.example.foodorderapps.user.models
+package com.example.foodorderapps.common.models
 
 data class Restaurant(var image:Int=0,var name:String="")
