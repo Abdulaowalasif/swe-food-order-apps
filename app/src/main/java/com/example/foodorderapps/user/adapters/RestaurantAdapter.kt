@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.foodorderapps.databinding.RestaurantBinding
-import com.example.foodorderapps.common.models.Restaurant // Ensure this is the correct model
 import com.example.foodorderapps.common.models.Restaurants
 
 class RestaurantAdapter(private var restaurants: List<Restaurants>?) :

@@ -24,6 +24,12 @@ class AdminAuthViewModel @Inject constructor(private val repo: AdminRepositories
     private val _adminInfo = MutableLiveData<Admin>()
     val adminInfo: LiveData<Admin> get() = _adminInfo
 
+    private val _adminExist = MutableLiveData<Boolean>()
+    val adminExist: LiveData<Boolean> = _adminExist
+
+    private val _uid = MutableLiveData<String>()
+    val uid: LiveData<String> = _uid
+
 
     fun signInAdmin(email: String, password: String) {
         viewModelScope.launch {
@@ -68,5 +74,16 @@ class AdminAuthViewModel @Inject constructor(private val repo: AdminRepositories
         }
     }
 
+    fun adminExist(uid: String) {
+        viewModelScope.launch {
+            _adminExist.value = repo.checkAdmin(uid)
+        }
+    }
+
+    fun uid() {
+        viewModelScope.launch {
+            _uid.value = repo.uid()
+        }
+    }
 
 }

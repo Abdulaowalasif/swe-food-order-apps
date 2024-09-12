@@ -65,6 +65,29 @@ class UserRepo @Inject constructor(
         }
     }
 
+    suspend fun checkUser(uid: String): Boolean {
+        return suspendCancellableCoroutine { continuation ->
+            val reference = database.getReference(USERS)
+            val listener = object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val exists = snapshot.child(uid).exists()
+                    continuation.resume(exists)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    continuation.resumeWithException(error.toException())
+                }
+            }
+            reference.addValueEventListener(listener)
+
+            continuation.invokeOnCancellation {
+                reference.removeEventListener(listener)
+            }
+        }
+    }
+
+    suspend fun uid(): String = auth.uid.toString()
+
     private suspend fun signInWithEmailAndPassword(email: String, password: String): Result<Unit> {
         return suspendCancellableCoroutine { continuation ->
             auth.signInWithEmailAndPassword(email, password)
@@ -186,6 +209,20 @@ class UserRepo @Inject constructor(
         } catch (e: Exception) {
             // Optionally log the exception here
             false
+        }
+    }
+
+    suspend fun searchItem(name: String): List<MenuList>? {
+        return try {
+            val response = apiInterface.searchMenuByName(name)
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            // Optionally log the exception here
+            null
         }
     }
 

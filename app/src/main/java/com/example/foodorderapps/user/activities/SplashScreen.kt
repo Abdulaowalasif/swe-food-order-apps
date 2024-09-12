@@ -21,8 +21,11 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class SplashScreen : AppCompatActivity() {
 
-    private val viewModel: AuthViewModel by viewModels()
-    private val auth: AdminAuthViewModel by viewModels()
+    private val user: AuthViewModel by viewModels()
+    private val admin: AdminAuthViewModel by viewModels()
+
+    private var adminUid: String = ""
+    private var userUid: String = ""
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,23 +36,46 @@ class SplashScreen : AppCompatActivity() {
             controller.systemBarsBehavior =
                 WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
-        Handler(Looper.getMainLooper()).postDelayed({
-            // Check if the user is logged in as an admin
+        admin.uid()
+        user.uid()
 
-            // Check if the user is logged in as a regular user
-            if (viewModel.getCurrentUser() != null) {
+        admin.uid.observe(this) { uid ->
+            if (uid.isNotBlank()) {
+                admin.adminExist(uid)
+                admin.adminExist.observe(this) {
+                    if (it) {
+                        adminUid = uid
+                    }
+                }
+            }
+        }
+        user.uid.observe(this) { uid ->
+            if (uid.isNotBlank()) {
+                user.checkUser(uid)
+                user.userExist.observe(this) {
+                    if (it) {
+                        userUid = uid
+                    }
+                }
+            }
+        }
+
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (adminUid != "") {
+                val intent = Intent(this, AdminHome::class.java)
+                startActivity(intent)
+                finish()
+            } else if (userUid != "") {
                 val intent = Intent(this, MainScreen::class.java)
                 startActivity(intent)
-            }
-            // If neither admin nor user is logged in, navigate to login screen
-            else {
+                finish()
+            } else {
                 val intent = Intent(this, Login::class.java)
                 startActivity(intent)
+                finish()
             }
-            // Close the current activity
-            finish()
         }, 3000)
-
 
 
     }

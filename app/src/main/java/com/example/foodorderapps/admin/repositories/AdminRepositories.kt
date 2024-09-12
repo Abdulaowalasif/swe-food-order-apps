@@ -9,6 +9,7 @@ import com.example.foodorderapps.common.models.Restaurants
 import com.example.foodorderapps.common.models.Admin
 import com.example.foodorderapps.common.utils.Utils.Companion.ADMIN
 import com.example.foodorderapps.common.utils.Utils.Companion.PROFILE
+import com.example.foodorderapps.common.utils.Utils.Companion.USERS
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -232,4 +233,27 @@ class AdminRepositories @Inject constructor(
             false
         }
     }
+
+    suspend fun checkAdmin(uid: String): Boolean {
+        return suspendCancellableCoroutine { continuation ->
+            val reference = database.getReference(ADMIN)
+            val listener = object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val exists = snapshot.child(uid).exists()
+                    continuation.resume(exists)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    continuation.resumeWithException(error.toException())
+                }
+            }
+            reference.addValueEventListener(listener)
+
+            continuation.invokeOnCancellation {
+                reference.removeEventListener(listener)
+            }
+        }
+    }
+
+    suspend fun uid(): String = auth.uid.toString()
 }

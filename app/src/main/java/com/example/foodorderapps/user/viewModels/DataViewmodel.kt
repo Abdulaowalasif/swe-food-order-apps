@@ -21,6 +21,9 @@ class DataViewmodel @Inject constructor(private val userRepo: UserRepo) : ViewMo
     private val _menuList = MutableLiveData<List<MenuList>?>()
     val menuList: LiveData<List<MenuList>?> get() = _menuList
 
+    private val _searchList = MutableLiveData<List<MenuList>?>()
+    val searchList: LiveData<List<MenuList>?> get() = _searchList
+
     private val _orderCreationStatus = MutableLiveData<OrderList?>()
     val orderCreationStatus: LiveData<OrderList?> get() = _orderCreationStatus
 
@@ -41,6 +44,16 @@ class DataViewmodel @Inject constructor(private val userRepo: UserRepo) : ViewMo
         viewModelScope.launch {
             _menuList.value = try {
                 userRepo.getAllMenu(id)
+            } catch (e: Exception) {
+                null
+            }
+        }
+    }
+
+    fun searchItem(name: String) {
+        viewModelScope.launch {
+            _searchList.value = try {
+                userRepo.searchItem(name)
             } catch (e: Exception) {
                 null
             }

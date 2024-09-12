@@ -1,5 +1,6 @@
 package com.example.foodorderapps.common.api
 
+import android.view.MenuItem
 import com.example.foodorderapps.common.models.MenuList
 import com.example.foodorderapps.common.models.OrderList
 import com.example.foodorderapps.common.models.Restaurants
@@ -10,6 +11,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiInterface {
 
@@ -55,4 +57,7 @@ interface ApiInterface {
     //admin
     @GET("orders/restaurant/{restaurantId}")
     suspend fun getOrdersByRestaurantId(@Path("restaurantId") restaurantId: String): Response<List<OrderList>>
+
+    @GET("menus/search")
+    suspend fun searchMenuByName(@Query("name") name: String): Response<List<MenuList>>
 }
