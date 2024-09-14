@@ -9,7 +9,7 @@ import com.example.foodorderapps.common.models.MenuList
 import com.example.foodorderapps.databinding.TopItemListBinding
 import com.example.foodorderapps.databinding.ActivityAdminHomeBinding.bind
 
-class TopItemAdapter(private var items: List<MenuList>) :
+class TopItemAdapter(private var items: List<MenuList>?) :
     RecyclerView.Adapter<TopItemAdapter.ViewHolder>() {
 
     lateinit var context: Context
@@ -25,15 +25,10 @@ class TopItemAdapter(private var items: List<MenuList>) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = items[position]
-        holder.bind(item)
-    }
-
-    fun upateData(list: List<MenuList>?) {
-        if (list != null) {
-            items = list
+        val item = items?.get(position)
+        if (item != null) {
+            holder.bind(item)
         }
-        notifyDataSetChanged()
     }
 
     inner class ViewHolder(private val binding: TopItemListBinding) :

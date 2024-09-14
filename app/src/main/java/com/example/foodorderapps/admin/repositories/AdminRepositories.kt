@@ -40,7 +40,7 @@ class AdminRepositories @Inject constructor(
             if (adminExists) {
                 signInWithEmailAndPassword(email, password)
             } else {
-                Result.failure(Exception("User does not exist"))
+                Result.failure(Exception("Admin does not exist"))
             }
         } catch (e: Exception) {
             Result.failure(e)

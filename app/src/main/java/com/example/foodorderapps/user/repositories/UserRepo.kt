@@ -174,9 +174,9 @@ class UserRepo @Inject constructor(
         }
     }
 
-    suspend fun getAllMenu(id: String): List<MenuList>? {
+    suspend fun getAllMenu(): List<MenuList>? {
         return try {
-            val response = apiInterface.getMenuByRestaurantId(id)
+            val response = apiInterface.getAllMenus()
             if (response.isSuccessful) {
                 response.body()
             } else {

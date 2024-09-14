@@ -13,11 +13,6 @@ import com.example.foodorderapps.common.models.Restaurants
 class RestaurantAdapter(private var restaurants: List<Restaurants>?) :
     RecyclerView.Adapter<RestaurantAdapter.ViewHolder>() {
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun updateData(newRestaurants: List<Restaurants>?) {
-        restaurants = newRestaurants
-        notifyDataSetChanged()
-    }
 
     override fun getItemCount(): Int = restaurants?.size ?: 0
 

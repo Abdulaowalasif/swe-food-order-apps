@@ -9,6 +9,6 @@ class Utils {
         val PROFILE = LocalDateTime.now()!!
         const val HOME_FRAGMENT = "home"
         const val PROFILE_FRAGMENT = "profile"
-        const val BASE_URL = "http://192.168.0.179:8080/"
+        const val BASE_URL = "http://192.168.1.205:8080/"
     }
 }
