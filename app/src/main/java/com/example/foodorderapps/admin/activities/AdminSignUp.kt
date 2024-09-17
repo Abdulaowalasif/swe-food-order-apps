@@ -1,6 +1,5 @@
 package com.example.foodorderapps.admin.activities
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -9,8 +8,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.foodorderapps.admin.viewmodels.AdminAuthViewModel
+import com.example.foodorderapps.common.utils.Utils.Companion.navigateToNext
 import com.example.foodorderapps.databinding.ActivityAdminSignUpBinding
-import com.example.foodorderapps.user.activities.Login
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -60,8 +59,7 @@ class AdminSignUp : AppCompatActivity() {
         authViewModel.signUpAdminState.observe(this) {
             if (it.isSuccess) {
                 binding.progressBar.visibility = View.GONE
-                val intent = Intent(this, AdminLogin::class.java)
-                startActivity(intent)
+              navigateToNext(this,AdminLogin::class.java)
                 finish()
 
             } else {
@@ -71,8 +69,7 @@ class AdminSignUp : AppCompatActivity() {
         }
 
         binding.loginText.setOnClickListener {
-            val intent = Intent(this, AdminLogin::class.java)
-            startActivity(intent)
+            navigateToNext(this,AdminLogin::class.java)
             finish()
         }
 

@@ -41,7 +41,7 @@ class UserRepo @Inject constructor(
         }
     }
 
-    private suspend fun checkUserExists(email: String): Boolean {
+    suspend fun checkUserExists(email: String): Boolean {
         return suspendCancellableCoroutine { continuation ->
             val reference = database.getReference(USERS)
             val listener = object : ValueEventListener {
@@ -64,29 +64,6 @@ class UserRepo @Inject constructor(
             }
         }
     }
-
-    suspend fun checkUser(uid: String): Boolean {
-        return suspendCancellableCoroutine { continuation ->
-            val reference = database.getReference(USERS)
-            val listener = object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val exists = snapshot.child(uid).exists()
-                    continuation.resume(exists)
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    continuation.resumeWithException(error.toException())
-                }
-            }
-            reference.addValueEventListener(listener)
-
-            continuation.invokeOnCancellation {
-                reference.removeEventListener(listener)
-            }
-        }
-    }
-
-    suspend fun uid(): String = auth.uid.toString()
 
     private suspend fun signInWithEmailAndPassword(email: String, password: String): Result<Unit> {
         return suspendCancellableCoroutine { continuation ->
@@ -135,6 +112,7 @@ class UserRepo @Inject constructor(
     }
 
     fun getCurrentUser() = auth.currentUser
+
     suspend fun getCurrentUserData(): Admin = suspendCancellableCoroutine { continuation ->
         auth.uid?.let { uid ->
             val userRef: DatabaseReference = database.getReference(USERS).child(uid)
@@ -174,6 +152,19 @@ class UserRepo @Inject constructor(
         }
     }
 
+    suspend fun getAllMenuById(id: String): List<MenuList>? {
+        return try {
+            val response = apiInterface.getMenuByRestaurantId(id)
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            // Optionally log the exception here
+            null
+        }
+    }
     suspend fun getAllMenu(): List<MenuList>? {
         return try {
             val response = apiInterface.getAllMenus()

@@ -2,7 +2,8 @@ package com.example.foodorderapps.user.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.os.Handler
+import android.os.Looper
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.ImageView
@@ -15,16 +16,20 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.foodorderapps.R
-import com.example.foodorderapps.databinding.ActivityHomeScreenBinding
-import com.example.foodorderapps.user.fragments.HomeScreenFragment
-import com.example.foodorderapps.user.fragments.ProfileFragment
 import com.example.foodorderapps.common.utils.Utils.Companion.HOME_FRAGMENT
 import com.example.foodorderapps.common.utils.Utils.Companion.PROFILE_FRAGMENT
+import com.example.foodorderapps.databinding.ActivityHomeScreenBinding
+import com.example.foodorderapps.user.adapters.SearchAdapter
+import com.example.foodorderapps.user.fragments.HomeScreenFragment
+import com.example.foodorderapps.user.fragments.ProfileFragment
 import com.example.foodorderapps.user.viewModels.AuthViewModel
 import com.example.foodorderapps.user.viewModels.DataViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainScreen : AppCompatActivity() {
@@ -40,8 +45,7 @@ class MainScreen : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         loadFragment(HomeScreenFragment(), HOME_FRAGMENT)
-
-
+        auth.getCurrentUserInfo()
         supportFragmentManager.addOnBackStackChangedListener {
             val backStackEntryCount = supportFragmentManager.backStackEntryCount
             if (backStackEntryCount > 0) {
@@ -58,7 +62,6 @@ class MainScreen : AppCompatActivity() {
         val hName = headerView.findViewById<TextView>(R.id.nav_name)
         val hEmail = headerView.findViewById<TextView>(R.id.nav_email)
 
-        auth.getCurrentUserInfo()
         auth.userInfo.observe(this) { info ->
             Glide.with(this).load(info.image).into(hProfile)
             hName.text = info.username
@@ -119,6 +122,7 @@ class MainScreen : AppCompatActivity() {
                 binding.searchRecycleView.visibility = VISIBLE
             }
         }
+
         binding.main.setOnClickListener {
             binding.searchView.clearFocus()
             binding.searchView.onActionViewCollapsed()
@@ -132,24 +136,29 @@ class MainScreen : AppCompatActivity() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-//                newText?.let { search(it) }
+                if (newText != null) {
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        dataViewmodel.searchItem(newText)
+                        search()
+                    }, 1000)
+
+                }
                 return true
             }
         })
     }
 
-//    private fun getItems(query: String): List<Search> {
-//        val listItems = ArrayList<Search>()
-//        //hit the api and get all the items by name
-//        return listItems
-//    }
-//
-//    private fun search(query: String) {
-//        val items = getItems(query)
-//        val adapter = SearchAdapter(items)
-//        binding.searchRecycleView.adapter = adapter
-//        binding.searchRecycleView.layoutManager = GridLayoutManager(this, 2)
-//    }
+    private fun search() {
+        binding.searchRecycleView.layoutManager = GridLayoutManager(this, 2)
+        lifecycleScope.launch {
+            dataViewmodel.searchList.collect { list ->
+                val adapter = SearchAdapter(list)
+                binding.searchRecycleView.adapter = adapter
+                adapter.notifyDataSetChanged()
+            }
+        }
+
+    }
 
     private fun loadFragment(fragment: Fragment, tag: String? = null) {
         val fragmentManager: FragmentManager = supportFragmentManager

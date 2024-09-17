@@ -19,11 +19,8 @@ class AuthViewModel @Inject constructor(private val repo: UserRepo) : ViewModel(
     val signInUserState: LiveData<Result<Unit>> = _signInUserState
     private val _userInfo = MutableLiveData<Admin>()
     val userInfo: LiveData<Admin> = _userInfo
-    private val _uid = MutableLiveData<String>()
-    val uid: LiveData<String> = _uid
     private val _userExist = MutableLiveData<Boolean>()
     val userExist: LiveData<Boolean> = _userExist
-
 
     fun signInUser(email: String, password: String) {
         viewModelScope.launch {
@@ -39,23 +36,16 @@ class AuthViewModel @Inject constructor(private val repo: UserRepo) : ViewModel(
 
     fun getCurrentUser() = repo.getCurrentUser()
 
-    fun getCurrentUserInfo() =
+     fun getCurrentUserInfo() =
         viewModelScope.launch {
             _userInfo.postValue(repo.getCurrentUserData())
         }
 
     fun logout() = repo.logOut()
 
-
-    fun uid() {
+    fun checkUser(email: String) {
         viewModelScope.launch {
-            _uid.value = repo.uid()
-        }
-    }
-
-    fun checkUser(uid: String) {
-        viewModelScope.launch {
-            _userExist.value = repo.checkUser(uid)
+            _userExist.value = repo.checkUserExists(email)
         }
     }
 }

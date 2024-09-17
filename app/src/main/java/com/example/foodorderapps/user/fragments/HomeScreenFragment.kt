@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.denzcoskun.imageslider.constants.AnimationTypes
 import com.denzcoskun.imageslider.models.SlideModel
 import com.example.foodorderapps.databinding.FragmentHomeScreenBinding
@@ -42,24 +43,35 @@ class HomeScreenFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         dataViewModel.fetchAllRestaurants()
+        dataViewModel.fetchAllMenu()
 
         lifecycleScope.launch {
-            dataViewModel.menuList.collect { list ->
-                list?.forEach() { item ->
-                    val imageList = arrayListOf(SlideModel(item.image))
-                    binding.imageSlider.setImageList(imageList.subList(0, 5))
-                    binding.imageSlider.setSlideAnimation(AnimationTypes.CUBE_OUT)
-                }
+            dataViewModel.allMenuList.collect { list ->
+                // Safely handle null list and limit to the first 5 items
+                val limitedList = list?.take(5) ?: emptyList()
+
+                // Create a list of SlideModel from the limited list
+                val imageList = limitedList.map { item -> SlideModel(item.image) }
+
+                // Configure the image slider
+                binding.imageSlider.setImageList(imageList)
+                binding.imageSlider.setSlideAnimation(AnimationTypes.CUBE_OUT)
             }
+
         }
 
         lifecycleScope.launch {
-            dataViewModel.menuList.collect { list ->
-                binding.topItem.layoutManager =
-                    LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-                topItemAdapter = TopItemAdapter(list)
-                binding.topItem.adapter = topItemAdapter
-                topItemAdapter.notifyDataSetChanged()
+            dataViewModel.allMenuList.collect { list ->
+
+                list?.let {
+                    val limitedList = if (list.size > 7) list.take(7) else list
+                    binding.topItem.layoutManager =
+                        LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+                    topItemAdapter = TopItemAdapter(limitedList)
+                    binding.topItem.adapter = topItemAdapter
+                    topItemAdapter.notifyDataSetChanged()
+
+                }
             }
         }
 

@@ -1,6 +1,5 @@
 package com.example.foodorderapps.user.activities
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -8,6 +7,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.foodorderapps.admin.activities.AdminLogin
+import com.example.foodorderapps.common.utils.Utils.Companion.navigateToNext
 import com.example.foodorderapps.databinding.ActivityLoginBinding
 import com.example.foodorderapps.user.viewModels.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,8 +39,7 @@ class Login : AppCompatActivity() {
         authViewModel.signInUserState.observe(this) {
             if (it.isSuccess) {
                 binding.progressBar2.visibility = View.GONE
-                val intent = Intent(this, MainScreen::class.java)
-                startActivity(intent)
+                navigateToNext(this, MainScreen::class.java)
                 finish()
             } else {
                 binding.progressBar2.visibility = View.GONE
@@ -54,13 +53,11 @@ class Login : AppCompatActivity() {
         }
 
         binding.signUpText.setOnClickListener {
-            val intent = Intent(this, Signup::class.java)
-            startActivity(intent)
+            navigateToNext(this, Signup::class.java)
         }
 
         binding.adminLogin.setOnClickListener {
-            val intent=Intent(this,AdminLogin::class.java)
-            startActivity(intent)
+            navigateToNext(this, AdminLogin::class.java)
         }
 
 

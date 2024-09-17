@@ -1,6 +1,7 @@
 package com.example.foodorderapps.user.adapters
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -8,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.example.foodorderapps.common.models.MenuList
 import com.example.foodorderapps.databinding.TopItemListBinding
 import com.example.foodorderapps.databinding.ActivityAdminHomeBinding.bind
+import com.example.foodorderapps.user.activities.AllItem
 
 class TopItemAdapter(private var items: List<MenuList>?) :
     RecyclerView.Adapter<TopItemAdapter.ViewHolder>() {
@@ -21,7 +23,7 @@ class TopItemAdapter(private var items: List<MenuList>?) :
     }
 
     override fun getItemCount(): Int {
-        return 8
+        return items?.size ?: 0
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -29,6 +31,9 @@ class TopItemAdapter(private var items: List<MenuList>?) :
         if (item != null) {
             holder.bind(item)
         }
+        val intent = Intent(context, AllItem::class.java)
+        intent.putExtra("topItem", item)
+        context.startActivity(intent)
     }
 
     inner class ViewHolder(private val binding: TopItemListBinding) :

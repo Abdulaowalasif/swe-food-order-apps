@@ -1,7 +1,5 @@
 package com.example.foodorderapps.user.viewModels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.foodorderapps.common.models.MenuList
@@ -23,6 +21,9 @@ class DataViewModel @Inject constructor(private val userRepo: UserRepo) : ViewMo
     private val _menuList = MutableStateFlow<List<MenuList>?>(null)
     val menuList: StateFlow<List<MenuList>?> get() = _menuList
 
+    private val _allMenuList = MutableStateFlow<List<MenuList>?>(null)
+    val allMenuList: StateFlow<List<MenuList>?> get() = _allMenuList
+
     private val _searchList = MutableStateFlow<List<MenuList>?>(null)
     val searchList: StateFlow<List<MenuList>?> get() = _searchList
 
@@ -43,11 +44,22 @@ class DataViewModel @Inject constructor(private val userRepo: UserRepo) : ViewMo
         }
     }
 
-    fun fetchMenuByRestaurantId() {
+    fun fetchMenuById(id: String) {
+        viewModelScope.launch {
+            try {
+                val result = userRepo.getAllMenuById(id)
+                _menuList.emit(result)
+            } catch (e: Exception) {
+                null
+            }
+        }
+    }
+
+    fun fetchAllMenu() {
         viewModelScope.launch {
             try {
                 val result = userRepo.getAllMenu()
-                _menuList.emit(result)
+                _allMenuList.emit(result)
             } catch (e: Exception) {
                 null
             }

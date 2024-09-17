@@ -47,7 +47,7 @@ class AdminRepositories @Inject constructor(
         }
     }
 
-    private suspend fun checkAdminExists(email: String): Boolean {
+     suspend fun checkAdminExists(email: String): Boolean {
         return suspendCancellableCoroutine { continuation ->
             val reference = database.getReference(ADMIN)
             val listener = object : ValueEventListener {
@@ -167,7 +167,6 @@ class AdminRepositories @Inject constructor(
 
     fun logOut() = auth.signOut()
 
-
     suspend fun addMenu(menuList: MenuList): MenuList? {
         return try {
             val response = apiInterface.addMenu(menuList)
@@ -233,27 +232,4 @@ class AdminRepositories @Inject constructor(
             false
         }
     }
-
-    suspend fun checkAdmin(uid: String): Boolean {
-        return suspendCancellableCoroutine { continuation ->
-            val reference = database.getReference(ADMIN)
-            val listener = object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val exists = snapshot.child(uid).exists()
-                    continuation.resume(exists)
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    continuation.resumeWithException(error.toException())
-                }
-            }
-            reference.addValueEventListener(listener)
-
-            continuation.invokeOnCancellation {
-                reference.removeEventListener(listener)
-            }
-        }
-    }
-
-    suspend fun uid(): String = auth.uid.toString()
 }
