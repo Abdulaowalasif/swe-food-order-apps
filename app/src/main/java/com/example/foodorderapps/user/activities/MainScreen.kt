@@ -1,9 +1,12 @@
 package com.example.foodorderapps.user.activities
 
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.Gravity
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.ImageView
@@ -13,6 +16,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
@@ -30,6 +34,8 @@ import com.example.foodorderapps.user.viewModels.AuthViewModel
 import com.example.foodorderapps.user.viewModels.DataViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
 
 @AndroidEntryPoint
 class MainScreen : AppCompatActivity() {
@@ -38,12 +44,10 @@ class MainScreen : AppCompatActivity() {
     }
     private val auth: AuthViewModel by viewModels()
     private val dataViewmodel: DataViewModel by viewModels()
-    private lateinit var toggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
         loadFragment(HomeScreenFragment(), HOME_FRAGMENT)
         auth.getCurrentUserInfo()
         supportFragmentManager.addOnBackStackChangedListener {
@@ -66,17 +70,17 @@ class MainScreen : AppCompatActivity() {
             Glide.with(this).load(info.image).into(hProfile)
             hName.text = info.username
             hEmail.text = info.email
+            Glide.with(this).load(info.image).into(binding.toggleButton)
         }
 
-        toggle = ActionBarDrawerToggle(
-            this,
-            binding.drawer,
-            binding.toolbar,
-            R.string.open,
-            R.string.close
-        )
-        binding.drawer.addDrawerListener(toggle)
-        toggle.syncState()
+        binding.toggleButton.setOnClickListener {
+            if (binding.drawer.isDrawerOpen(GravityCompat.START)) {
+                binding.drawer.closeDrawer(GravityCompat.START)
+            } else {
+                binding.drawer.openDrawer(GravityCompat.START)
+            }
+
+        }
 
         binding.navView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
@@ -115,6 +119,7 @@ class MainScreen : AppCompatActivity() {
             if (!hasFocus) {
                 binding.searchView.clearFocus()
                 binding.searchView.onActionViewCollapsed()
+                dataViewmodel.clearSearch()
                 binding.frameLay.visibility = VISIBLE
                 binding.searchRecycleView.visibility = GONE
             } else {
@@ -126,6 +131,7 @@ class MainScreen : AppCompatActivity() {
         binding.main.setOnClickListener {
             binding.searchView.clearFocus()
             binding.searchView.onActionViewCollapsed()
+            dataViewmodel.clearSearch()
             binding.frameLay.visibility = VISIBLE
             binding.searchRecycleView.visibility = GONE
         }
@@ -150,9 +156,10 @@ class MainScreen : AppCompatActivity() {
 
     private fun search() {
         binding.searchRecycleView.layoutManager = GridLayoutManager(this, 2)
+        val adapter = SearchAdapter()
         lifecycleScope.launch {
             dataViewmodel.searchList.collect { list ->
-                val adapter = SearchAdapter(list)
+                adapter.submitList(list)
                 binding.searchRecycleView.adapter = adapter
                 adapter.notifyDataSetChanged()
             }
@@ -177,8 +184,8 @@ class MainScreen : AppCompatActivity() {
 
     private fun updateToolbarTitle(tag: String?) {
         when (tag) {
-            PROFILE_FRAGMENT -> supportActionBar?.title = PROFILE_FRAGMENT
-            else -> supportActionBar?.title = HOME_FRAGMENT
+            PROFILE_FRAGMENT -> binding.title.text = PROFILE_FRAGMENT
+            else -> binding.title.text = HOME_FRAGMENT
         }
     }
 }

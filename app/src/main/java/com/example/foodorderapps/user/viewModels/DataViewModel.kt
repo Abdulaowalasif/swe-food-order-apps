@@ -98,4 +98,11 @@ class DataViewModel @Inject constructor(private val userRepo: UserRepo) : ViewMo
             }
         }
     }
+
+
+    fun clearSearch(){
+        viewModelScope.launch {
+            _searchList.emit(emptyList())
+        }
+    }
 }

@@ -29,8 +29,8 @@ class HomeScreenFragment : Fragment() {
     private val dataViewModel: DataViewModel by viewModels()
     private var _binding: FragmentHomeScreenBinding? = null
     private val binding get() = _binding!!
-    private lateinit var topItemAdapter: TopItemAdapter
-    private lateinit var restaurantAdapter: RestaurantAdapter
+    private var topItemAdapter: TopItemAdapter = TopItemAdapter()
+    private var restaurantAdapter: RestaurantAdapter = RestaurantAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -67,7 +67,7 @@ class HomeScreenFragment : Fragment() {
                     val limitedList = if (list.size > 7) list.take(7) else list
                     binding.topItem.layoutManager =
                         LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-                    topItemAdapter = TopItemAdapter(limitedList)
+                    topItemAdapter.submitList(limitedList)
                     binding.topItem.adapter = topItemAdapter
                     topItemAdapter.notifyDataSetChanged()
 
@@ -78,7 +78,7 @@ class HomeScreenFragment : Fragment() {
         lifecycleScope.launch {
             dataViewModel.restaurants.collect { list ->
                 binding.restaurantList.layoutManager = GridLayoutManager(context, 3)
-                restaurantAdapter = RestaurantAdapter(list)
+                restaurantAdapter.submitList(list)
                 binding.restaurantList.adapter = restaurantAdapter
                 restaurantAdapter.notifyDataSetChanged()
 

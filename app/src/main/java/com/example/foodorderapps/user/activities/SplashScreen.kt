@@ -22,7 +22,6 @@ class SplashScreen : AppCompatActivity() {
     private val userViewModel: AuthViewModel by viewModels()
     private val adminViewModel: AdminAuthViewModel by viewModels()
 
-
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,14 +32,12 @@ class SplashScreen : AppCompatActivity() {
         val email = user?.email
 
         if (email != null) {
-            // Check if the user exists
             userViewModel.checkUser(email)
             userViewModel.userExist.observe(this) { userExists ->
                 if (userExists) {
                     navigateToNext(this, MainScreen::class.java)
                     finish()
                 } else {
-                    // Check if the admin exists
                     adminViewModel.adminExist(email)
                     adminViewModel.adminExist.observe(this) { adminExists ->
                         if (adminExists) {
