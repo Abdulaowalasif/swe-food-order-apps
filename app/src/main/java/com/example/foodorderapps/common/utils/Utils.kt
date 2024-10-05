@@ -12,13 +12,11 @@ class Utils {
         val PROFILE = LocalDateTime.now()!!
         const val HOME_FRAGMENT = "home"
         const val PROFILE_FRAGMENT = "profile"
-        const val BASE_URL = "http://192.168.1.205:8080/"
-        const val ITEM_REF="Items"
+        const val BASE_URL = "http://192.168.0.179:8080/"
+        const val ITEM_REF = "Items"
+        const val ITEM_DETAILS = "details"
 
-        fun navigateToNext(
-            context: Context,
-            destination: Class<out AppCompatActivity>
-        ) {
+        fun navigateToNext(context: Context, destination: Class<out AppCompatActivity>) {
             val intent = Intent(context, destination)
             context.startActivity(intent)
         }

@@ -69,6 +69,7 @@ dependencies {
     implementation (libs.gson)
     implementation (libs.converter.gson)
     annotationProcessor (libs.compiler)
+
 }
 kapt {
     correctErrorTypes = true

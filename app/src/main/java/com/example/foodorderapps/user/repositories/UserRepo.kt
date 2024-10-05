@@ -6,6 +6,7 @@ import com.example.foodorderapps.common.models.MenuList
 import com.example.foodorderapps.common.models.OrderList
 import com.example.foodorderapps.common.models.Restaurants
 import com.example.foodorderapps.common.models.Admin
+import com.example.foodorderapps.common.models.Cart
 import com.example.foodorderapps.common.utils.Utils.Companion.PROFILE
 import com.example.foodorderapps.common.utils.Utils.Companion.USERS
 import com.google.firebase.auth.FirebaseAuth
@@ -165,6 +166,21 @@ class UserRepo @Inject constructor(
             null
         }
     }
+
+    suspend fun getMenuByMenuId(id: Long): MenuList? {
+        return try {
+            val response = apiInterface.getMenuByMenuId(id)
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            // Optionally log the exception here
+            null
+        }
+    }
+
     suspend fun getAllMenu(): List<MenuList>? {
         return try {
             val response = apiInterface.getAllMenus()
@@ -214,6 +230,41 @@ class UserRepo @Inject constructor(
         } catch (e: Exception) {
             // Optionally log the exception here
             null
+        }
+    }
+
+    suspend fun addCart(cart: Cart): Cart? {
+        return try {
+            val response = apiInterface.addCart(cart)
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    suspend fun getCart(id: String): List<Cart>? {
+        return try {
+            val response = apiInterface.getAllCart(id)
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    suspend fun deleteCart(id: Long): Boolean {
+        return try {
+            val response = apiInterface.deleteCart(id)
+            response.isSuccessful
+        } catch (e: Exception) {
+            false
         }
     }
 

@@ -1,6 +1,7 @@
 package com.example.foodorderapps.common.api
 
 import android.view.MenuItem
+import com.example.foodorderapps.common.models.Cart
 import com.example.foodorderapps.common.models.MenuList
 import com.example.foodorderapps.common.models.OrderList
 import com.example.foodorderapps.common.models.Restaurants
@@ -35,6 +36,9 @@ interface ApiInterface {
     @DELETE("menus/{id}")
     suspend fun deleteMenu(@Path("id") id: Long): Response<Void>
 
+    @GET("menus/{id}")
+    suspend fun getMenuByMenuId(@Path("id") id: Long): Response<MenuList>
+
 
     @GET("menus")
     suspend fun getAllMenus(): Response<List<MenuList>>
@@ -58,6 +62,17 @@ interface ApiInterface {
     @GET("orders/restaurant/{restaurantId}")
     suspend fun getOrdersByRestaurantId(@Path("restaurantId") restaurantId: String): Response<List<OrderList>>
 
+    //user
     @GET("menus/search")
     suspend fun searchMenuByName(@Query("name") name: String): Response<List<MenuList>>
+
+    @POST("cart")
+    suspend fun addCart(@Body cart: Cart): Response<Cart>
+
+    @DELETE("cart/{id}")
+    suspend fun deleteCart(@Path("id") id: Long): Response<Void>
+
+    //getting all cart item by user id
+    @GET("cart/menu/{menuId}")
+    suspend fun getAllCart(@Path("menuId") menuId: String): Response<List<Cart>>
 }

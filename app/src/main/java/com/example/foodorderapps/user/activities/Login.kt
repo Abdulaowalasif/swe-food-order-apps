@@ -30,12 +30,9 @@ class Login : AppCompatActivity() {
             binding.progressBar2.visibility = View.VISIBLE
             if (email.isNotBlank() && pass.isNotBlank()) {
                 authViewModel.signInUser(email, pass)
-            } else {
-                binding.progressBar2.visibility = View.GONE
-                Toast.makeText(this, "enter all the details", Toast.LENGTH_SHORT).show()
             }
-
         }
+
         authViewModel.signInUserState.observe(this) {
             if (it.isSuccess) {
                 binding.progressBar2.visibility = View.GONE

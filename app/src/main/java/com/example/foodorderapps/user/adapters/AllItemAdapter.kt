@@ -10,32 +10,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.foodorderapps.common.models.MenuList
 import com.example.foodorderapps.common.utils.Utils.Companion.ITEM_DETAILS
-import com.example.foodorderapps.databinding.TopItemListBinding
-import com.example.foodorderapps.user.activities.AllItem
+import com.example.foodorderapps.databinding.ItemDetailsBinding
 import com.example.foodorderapps.user.activities.ItemDetails
 
-class TopItemAdapter :
-    ListAdapter<MenuList, TopItemAdapter.ViewHolder>(MenuListDiffCallback()) {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = TopItemListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ViewHolder(binding, parent.context)
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = getItem(position)
-        holder.bind(item)
-    }
+class AllItemAdapter : ListAdapter<MenuList, AllItemAdapter.ViewHolder>(MenuUtil()) {
 
     inner class ViewHolder(
-        private val binding: TopItemListBinding,
+        private val binding: ItemDetailsBinding,
         private val context: Context
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: MenuList) {
-            Glide.with(context).load(item.image).into(binding.topItemImage)
-            binding.topItemTitle.text = item.name
-
-            // Set up the click listener
+            binding.itemTitle.text = item.name
+            binding.itemPrice.text = item.price.toString()
+            Glide.with(context).load(item.image).into(binding.image)
             itemView.setOnClickListener {
                 val intent = Intent(context, ItemDetails::class.java)
                 intent.putExtra(ITEM_DETAILS, item)
@@ -44,14 +31,26 @@ class TopItemAdapter :
         }
     }
 
-    class MenuListDiffCallback : DiffUtil.ItemCallback<MenuList>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding =
+            ItemDetailsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding, parent.context)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val item = getItem(position)
+        holder.bind(item)
+    }
+
+    class MenuUtil : DiffUtil.ItemCallback<MenuList>() {
         override fun areItemsTheSame(oldItem: MenuList, newItem: MenuList): Boolean {
-            // Assuming MenuList has an id or unique identifier
             return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: MenuList, newItem: MenuList): Boolean {
             return oldItem == newItem
         }
+
+
     }
 }

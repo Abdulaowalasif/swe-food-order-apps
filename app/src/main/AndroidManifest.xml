@@ -17,6 +17,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".user.activities.ItemDetails"
+            android:exported="false" />
+        <activity
+            android:name=".admin.activities.Items"
+            android:exported="false" />
+        <activity
             android:name=".user.activities.AllItem"
             android:exported="false" />
         <activity

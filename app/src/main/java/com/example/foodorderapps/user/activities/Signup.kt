@@ -46,9 +46,6 @@ class Signup : AppCompatActivity() {
             binding.progressBar.visibility = View.VISIBLE
             if (email.isNotBlank() && pass.isNotBlank() && username.isNotBlank()) {
                 authViewModel.signUpUser(email, pass, username, image = imageUri)
-            } else {
-                binding.progressBar.visibility = View.GONE
-                Toast.makeText(this, "Enter all the details", Toast.LENGTH_SHORT).show()
             }
         }
         authViewModel.signUpUserState.observe(this) {
